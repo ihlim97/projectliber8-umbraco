@@ -1,0 +1,30 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = null;
+    var title = (String)Model.Value("pageTitle") == "" ? Model.Name : Model.Value("pageTitle");
+    var disableSEO = Model.Value<bool>("hidePageFromSearchEngines");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@title</title>
+    <meta name="description" content="@Model.Value("description")">
+    <link rel="stylesheet" href="~/Assets/css/bundle.css?v=0.1" />
+
+    @if (disableSEO)
+    {
+        <meta name="robots" content="noindex" />
+        <meta name="robots" content="nofollow" />
+    }
+
+</head>
+<body>
+    @RenderBody()
+    <script src="~/Assets/js/main.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,225 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.TheMovementPage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1 p2">@Model.Value("title")</h2>
+        <h2 class="h1">@Model.Value("subtitle")</h2>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value("altText")" class="background">
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-center py-5">
+        <div class="col-12 col-md-4">
+            <h2 class="display-4 p2 mb-4 mb-md-0">
+                @Model.Value("mainContentTitle")
+            </h2>
+        </div>
+        <div class="col-12 col-md-6 offset-md-2">
+            <h4 class="p2">@Model.Value("mainContentSubtitle")</h4>
+            <div class="bt3 p1">
+                @Html.Raw(Model.Value("content"))
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    var tiles = Model.Value<IEnumerable<IPublishedElement>>("contentTiles");
+    var abtTileIdx = 0;
+}
+@foreach (var tile in tiles)
+{
+    abtTileIdx++;
+    var tileImage = tile.Value<IPublishedContent>("tileImage");
+    <div class="container-fluid text-by-image-tile p-0">
+        <div class="row no-gutters d-flex@(abtTileIdx % 2 == 0 ? " flex-row-reverse" : "")">
+            <div class="col col-12 col-md-6 p-5 d-flex flex-column justify-content-center" style="background-color: @tile.Value("tileContentBoxBackgroundColor")">
+                @Html.Raw(tile.Value("tileContent"))
+            </div>
+            <div class="col col-12 col-md-6 pos-rel">
+                <div class="overlay-content p-5">
+                    <h2 class="display-4 w"><span class="p1">@tile.Value("tileImageTitle")</span> @tile.Value("tileImageSubtitle")</h2>
+                </div>
+                <img src="@tileImage.GetCropUrl(width: 1200, height: 750)" alt="@tileImage.Value("altText")" class="background">
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row d-flex justify-content-center py-5">
+        <div class="col-12 text-center">
+            <h2 class="display-4 p2 mb-3">@Model.Value("volunteerBannerTitle")</h2>
+            @{
+                var volunteerLink = Model.Value<Umbraco.Web.Models.Link>("volunteerLinkLocation");
+            }
+            <a href="@volunteerLink.Url" target="@volunteerLink.Target" class="btn btn-default btn-secondary btn-lg">@volunteerLink.Name</a>
+        </div>
+        <div class="col-12 col-md-3 text-center pt-4">
+            <p>
+                <small>@Model.Value("volunteerFineprint")</small>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="image-responsive">
+    <div class="content d-flex align-items-center text-right">
+        <div class="container-fluid py-5 text-center w">
+            <h2 class="display-4">@Model.Value("lobbySectionTitle")</h2>
+            <p class="bt1">@Model.Value("lobbySectionSubtitle")</p>
+        </div>
+    </div>
+    @{
+        var lobbyImage = Model.Value<IPublishedContent>("lobbySectionImage");
+    }
+    <img src="@lobbyImage.Url" alt="@lobbyImage.Value("altText")" class="background">
+</div>
+
+<div class="bg-p1">
+    <div class="container">
+        <div class="row py-5 d-flex align-items-center">
+            <div class="col-12 col-md-6">
+                @Model.Value("findSomethingSectionContent")
+            </div>
+            <div class="col-12 col-md-6 text-center">
+                <p class="bt1 p2">
+                    @Model.Value("findSomethingSectionTitle")
+                </p>
+                @{
+                    var findSmtgLink = Model.Value<Umbraco.Web.Models.Link>("findInterestingLinkLocation");
+                }
+                <a href="@findSmtgLink.Url" target="@findSmtgLink.Target" class="btn btn-default btn-light btn-lg">@findSmtgLink.Name</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-center py-5">
+        <div class="col-12">
+            <h2 class="display-4 mb-4">Resources</h2>
+        </div>
+        @{
+            var carouselItems = Model.Value<IEnumerable<IPublishedContent>>("carouselItemsFolder");
+        }
+        <div class="col-12 carousel-read-more-2-container">
+            <div class="carousel-read-more-2">
+
+                @foreach (var item in carouselItems)
+                {
+                    var itemImg = item.Value<IPublishedContent>("image");
+                    <div class="card-read-more-2">
+                        <div class="content">
+                            <p class="bt1 w">@item.Value("title")</p>
+                            <a href="#story-behind-modal-@item.Id" data-toggle="modal" class="btn btn-default w btn-primary">Find out more</a>
+                        </div>
+                        <div class="card-background-container">
+                            <img src="@itemImg.Url" alt="@itemImg.Value("altText")" class="card-background">
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div class="arrow-prev">
+                <button type="button" class="slick-prev">
+                    <svg class="icon icon-xxl">
+                        <use xlink:href="~/Assets/img/icons/icons.svg#sprite-chevron-right" href="~/Assets/img/icons/icons.svg#sprite-chevron-right"></use>
+                    </svg>
+                </button>
+            </div>
+            <div class="arrow-next">
+                <button type="button" class="slick-next">
+                    <svg class="icon icon-xxl">
+                        <use xlink:href="~/Assets/img/icons/icons.svg#sprite-chevron-right" href="~/Assets/img/icons/icons.svg#sprite-chevron-right"></use>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+</div>
+
+@section Modals {
+
+    @foreach (var program in carouselItems)
+    {
+        <div class="story-behind-modal modal fade"
+             id="story-behind-modal-@program.Id" tabindex="-1" role="dialog" aria-labelledby="story-behind-modal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header pl-4">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">
+                                <svg class="icon">
+                                    <use xlink:href="~/Assets/img/icons/icons.svg#sprite-close" href="~/Assets/img/icons/icons.svg#sprite-close"></use>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="p2">@program.Value("title")</h3>
+
+                                    @if (program.Value<String>("overview").Length > 0)
+                                    {
+                                        <p class="mb-0">Overview</p>
+                                        <div class="p1">
+                                            @Html.Raw(program.Value("overview"))
+                                        </div>
+                                    }
+
+                                    @if (program.Value<String>("audience").Length > 0)
+                                    {
+                                        <p class="mb-0">Audience</p>
+                                        <p class="p1">
+                                            @Html.Raw(program.Value("audience"))
+                                        </p>
+                                    }
+
+                                    @if (program.Value<String>("length").Length > 0)
+                                    {
+                                        <p class="mb-0">Length</p>
+                                        <p class="p1">
+                                            @Html.Raw(program.Value("length"))
+                                        </p>
+                                    }
+
+                                    @if (program.Value<String>("focus").Length > 0)
+                                    {
+                                        <p class="mb-0">Focus</p>
+                                        <p class="p1">
+                                            @Html.Raw(program.Value("focus"))
+                                        </p>
+                                    }
+
+                                    @if (program.Value<String>("outcomes").Length > 0)
+                                    {
+                                        <p class="mb-0">Outcomes</p>
+                                        <div class="p1">
+                                            @Html.Raw(program.Value("outcomes"))
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

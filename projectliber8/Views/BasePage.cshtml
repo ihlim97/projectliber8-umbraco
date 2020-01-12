@@ -1,0 +1,117 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "master.cshtml";
+
+    IPublishedContent siteHomePage = Model.Root();
+    var isHomepage = (siteHomePage.Id == Model.Id);
+}
+<header>
+
+    <div class="navbar navbar-light bg-w navbar-expand-md">
+        <div class="d-flex justify-content-between align-items-center justify-content-md-center">
+            <a href="@siteHomePage.Url" class="navbar-brand my-md-3">
+                <img src="~/Assets/img/logo.svg" alt="Project Liber8 Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse d-md-flex justify-content-md-center" id="navbarNav">
+            <ul class="navbar-nav">
+                @*
+                    Render homepage first
+                    Always shown by default
+                *@
+                <li class="nav-item@(isHomepage ? " active" : "")">
+                    <a class="nav-link" href="@siteHomePage.Url">
+                        Home
+                        @if (isHomepage)
+                        {
+                            <span class="sr-only">(current)</span>
+                        }
+                    </a>
+                </li>
+
+                @foreach (var child in siteHomePage.Children().Where(c => c.Value<Boolean>("hideInNavigation") == false))
+                {
+                    var hasChildren = child.Children().Where(c => c.Value<Boolean>("hideInNavigation") == false).Count() > 0;
+                    var activeClass = !isHomepage && Model.Path.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Contains(child.Id.ToString());
+                    var isHidden = child.Value<Boolean>("hideInNavigation");
+                    if (!isHidden)
+                    {
+                        <li class="nav-item@( activeClass ? " active" : "" )@( hasChildren ? " dropdown" : "" )">
+                            @if (!hasChildren)
+                            {
+                                <a class="nav-link" href="@child.Url">
+                                    @child.Name
+                                    @if (activeClass)
+                                    {
+                                        <span class="sr-only">(current)</span>
+                                    }
+                                </a>
+                            }
+                            else
+                            {
+                                var dropdownName = $"dropdown-{child.Id}";
+                                <a class="nav-link dropdown-toggle" href="#" id="@dropdownName" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @child.Name
+                                </a>
+
+                                <div class="dropdown-menu" aria-labelledby="@dropdownName">
+                                    @{
+                                        var secondLevelChildren = child.Children().Where(c => c.Value<Boolean>("hideInNavigation") == false);
+                                        var count = secondLevelChildren.Count();
+                                        var has2ndLevelChildren = secondLevelChildren.Count() != 0;
+                                    }
+
+                                    @if (has2ndLevelChildren)
+                                    {
+                                        foreach (var child2ndLevel in secondLevelChildren)
+                                        {
+                                            var child2ndActive = !isHomepage && Model.Path.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Contains(child2ndLevel.Id.ToString());
+                                            <a class="dropdown-item@( child2ndActive ? " active" : "" )" href="@child2ndLevel.Url">@child2ndLevel.Name</a>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </li>
+                    }
+                }
+
+            </ul>
+        </div>
+    </div>
+</header>
+<body>
+    @RenderBody()
+</body>
+<footer>
+    <div class="container text-center">
+        <div class="social-media d-flex justify-content-end mb-3">
+            <a href="http://www.facebook.com/ProjectLiber8">
+                <img src="~/Assets/img/facebook.svg" alt="facebook">
+            </a>
+            <a href="http://www.twitter.com/ProjectLiber8">
+                <img src="~/Assets/img/twitter.svg" alt="twitter">
+            </a>
+            <a href="http://www.instagram.com/ProjectLiber8">
+                <img src="~/Assets/img/instagram.svg" alt="instagram">
+            </a>
+            <a href="http://www.linkedin.com/ProjectLiber8">
+                <img src="~/Assets/img/linkedin.svg" alt="linkedin">
+            </a>
+        </div>
+
+        <ul class="footer-links">
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/about.html">ABOUT</a></li>
+            <li><a href="/join-the-team.html">Join THE TEAM</a></li>
+            <li><a href="/impact.html">IMPACT</a></li>
+            <li><a href="/the-movement.html">THE MOVEMENT</a></li>
+            <li><a href="/blog.html">BLOG</a></li>
+        </ul>
+
+        <p>Copyright &copy; @DateTime.Now.Year PROJECT LIBER8. All rights reserved.</p>
+    </div>
+</footer>
+@RenderSection("Modals", required: false)

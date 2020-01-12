@@ -1,0 +1,264 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Advoc8SeriesOnTheGo>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1">@Model.Value("title")</h2>
+        <h4 class="p2">@Model.Value("subtitle")</h4>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>
+            ("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value(" altText")" class="background">
+</div>
+
+@{
+    var tiles = Model.Value<IEnumerable<IPublishedElement>>("tiles");
+    var tileIdx = 0;
+}
+@foreach (var tile in tiles)
+{
+    tileIdx++;
+    var tileImage = tile.Value<IPublishedContent>("tileImage");
+    <div class="container-fluid text-by-image-tile p-0">
+        <div class="row no-gutters d-flex@(tileIdx % 2 == 0 ? " flex-row-reverse" : "")">
+            <div class="col col-12 col-md-6 p-5 d-flex flex-column justify-content-center bt3 p1" style="background-color: @tile.Value("tileContentBoxBackgroundColor")">
+                @Html.Raw(tile.Value("tileContent"))
+            </div>
+            <div class="col col-12 col-md-6 pos-rel">
+                <div class="overlay-content p-5">
+                    <h2 class="display-4 w"><span class="p1">@tile.Value("tileImageTitle")</span> @tile.Value("tileImageSubtitle")</h2>
+                </div>
+                <img src="@tileImage.GetCropUrl(width: 1200, height: 750)" alt="@tileImage.Value("altText")" class="background">
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container">
+    <div class="row d-flex justify-content-center py-5">
+        <div class="col-8 text-center">
+            <div class="bt2 p2">
+                @Html.Raw(Model.Value("Content"))
+            </div>
+            @{
+                var regNowLink = Model.Value<Umbraco.Web.Models.Link>("linkLocation");
+            }
+            <a href="@regNowLink.Url" target="@regNowLink.Target" class="btn btn-default btn-secondary">
+                @regNowLink.Name
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="bg-p1 mb-4">
+    <div class="container-fluid px-5 py-5">
+        <div class="row py-5 d-flex flex-column-reverse flex-md-row align-items-center">
+            <div class="col-12 col-md-6 offset-md-1 ">
+                <div class="row d-flex justify-content-start">
+                    @{
+                        var statistics = Model.Value<IEnumerable<IPublishedContent>>("impactStatistics");
+                    }
+                    @foreach (var stat in statistics)
+                    {
+                        <div class="col flex-grow-0 text-center mb-4 mb-md-0">
+                            <h2 class="display-4 w">@stat.Value("title")</h2>
+                            <p class="w bt3 mb-0">@stat.Value("description")</p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <div class="col-12 col-md-5 mb-4 mb-md-0">
+                <h2 class="p2 display-4">@Model.Value("impactSectionTitle")</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-center py-5">
+        <div class="col-12 col-md-3">
+            <h2 class="display-4 mb-4">@Model.Value("sectionTitle")</h2>
+            <a href="#book-session-modal" data-toggle="modal" class="btn btn-default btn-secondary mb-4 mb-md-0">Book a Session Now</a>
+        </div>
+        <div class="col-12 col-md-8 offset-md-1">
+            @{
+                var advoc8Programs = Model.Value<IPublishedContent>("advoc8Programs");
+            }
+            <div class="carousel-read-more-2">
+
+                @foreach (var program in advoc8Programs.Children())
+                {
+                    var progImg = program.Value<IPublishedContent>("image");
+                    <div class="card-read-more-2">
+                        <div class="content">
+                            <p class="bt1 w">@program.Value("title")</p>
+                            <a href="#story-behind-modal-@program.Id" data-toggle="modal" class="btn btn-default w btn-primary">Find out more</a>
+                        </div>
+                        <div class="card-background-container">
+                            <img src="@progImg.Url" alt="@progImg.Value("altText")" class="card-background">
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <hr>
+</div>
+
+@section Modals {
+    <div class="book-session-modal modal fade"
+         id="book-session-modal" tabindex="-1" role="dialog" aria-labelledby="book-session-modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header pl-4">
+
+                    <h3 class="modal-title p2 ml-1" id="exampleModalLongTitle">Book A Session Now</h3>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            <svg class="icon">
+                                <use xlink:href="~/Assets/img/icons/icons.svg#sprite-close" href="~/Assets/img/icons/icons.svg#sprite-close"></use>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="container">
+                        <div class="form">
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="full-name">FULL NAME</label>
+                                        <input type="text" class="form-control" id="full-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone-number">PHONE NUMBER:</label>
+                                        <input type="text" class="form-control" id="phone-number">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email-addr">EMAIL ADDRESS:</label>
+                                        <input type="text" class="form-control" id="email-addr">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="organization">ORGANIZATION</label>
+                                        <select class="form-control" id="organization">
+                                            <option>School</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="progs">PROGRAMS THAT YOU ARE INTERESTED IN:</label>
+                                        <select name="interestedPrograms" class="form-control" id="progs">
+                                            @foreach (var program in advoc8Programs.Children())
+                                            {
+                                                <option value="@program.Id">@program.Value("title")</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="venue">VENUE:</label>
+                                        <input type="text" class="form-control" id="venue">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pref-date">PREFERRED DATE:</label>
+                                        <input type="text" class="form-control" id="pref-date" placeholder="YYYY/MM/DD">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message">MESSAGE</label>
+                                        <input type="text" class="form-control" id="message" placeholder="Write your message here">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row py-5">
+                                <div class="col-12 text-right">
+                                    <button class="btn btn-default btn-lg btn-secondary" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @foreach (var program in advoc8Programs.Children()) { 
+        <div class="story-behind-modal modal fade"
+         id="story-behind-modal-@program.Id" tabindex="-1" role="dialog" aria-labelledby="story-behind-modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header pl-4">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            <svg class="icon">
+                                <use xlink:href="~/Assets/img/icons/icons.svg#sprite-close" href="~/Assets/img/icons/icons.svg#sprite-close"></use>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 class="p2">@program.Value("title")</h3>
+
+                                @if (program.Value<String>("overview").Length > 0)
+                                {
+                                    <p class="mb-0">Overview</p>
+                                    <div class="p1">
+                                        @Html.Raw(program.Value("overview"))
+                                    </div>
+                                }
+
+                                @if (program.Value<String>("audience").Length > 0)
+                                {
+                                    <p class="mb-0">Audience</p>
+                                    <p class="p1">
+                                        @Html.Raw(program.Value("audience"))
+                                    </p>
+                                }
+
+                                @if (program.Value<String>("length").Length > 0)
+                                {
+                                    <p class="mb-0">Length</p>
+                                    <p class="p1">
+                                        @Html.Raw(program.Value("length"))
+                                    </p>
+                                }
+
+                                @if (program.Value<String>("focus").Length > 0)
+                                {
+                                    <p class="mb-0">Focus</p>
+                                    <p class="p1">
+                                        @Html.Raw(program.Value("focus"))
+                                    </p>
+                                }
+
+                                @if (program.Value<String>("outcomes").Length > 0)
+                                {
+                                    <p class="mb-0">Outcomes</p>
+                                    <div class="p1">
+                                        @Html.Raw(program.Value("outcomes"))
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+}

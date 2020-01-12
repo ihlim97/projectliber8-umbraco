@@ -1,0 +1,17 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.BlogPage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+	Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1">@Model.Value("title")</h2>
+        <h4 class="p2">@Model.Value("subtitle")</h4>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>
+            ("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value(" altText")" class="background">
+</div>

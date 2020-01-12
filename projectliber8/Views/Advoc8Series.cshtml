@@ -1,0 +1,106 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Advoc8Series>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1 p2">@Model.Value("title")</h2>
+        <h2 class="h1">@Model.Value("subtitle")</h2>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value("altText")" class="background">
+</div>
+
+<div class="container">
+    <div class="row py-5">
+        <div class="col-12 bt3 p1">
+            @Html.Raw(Model.Value<String>("mainContent"))
+        </div>
+    </div>
+</div>
+
+@{
+    var tiles = Model.Value<IEnumerable<IPublishedElement>>("tiles");
+    var tileIdx = 0;
+}
+@foreach (var tile in tiles)
+{
+    tileIdx++;
+    var tileImage = tile.Value<IPublishedContent>("tileImage");
+    <div class="container-fluid text-by-image-tile p-0">
+        <div class="row no-gutters d-flex@(tileIdx % 2 == 0 ? " flex-row-reverse" : "")">
+            <div class="col col-12 col-md-6 p-5 d-flex flex-column justify-content-center bt3" style="background-color: @tile.Value("tileContentBoxBackgroundColor")">
+                @Html.Raw(tile.Value("tileContent"))
+            </div>
+            <div class="col col-12 col-md-6 pos-rel">
+                <div class="overlay-content p-5">
+                    <h2 class="display-4 w"><span class="p1">@tile.Value("tileImageTitle")</span> @tile.Value("tileImageSubtitle")</h2>
+                </div>
+                <img src="@tileImage.GetCropUrl(width: 1200, height: 750)" alt="@tileImage.Value("altText")" class="background">
+            </div>
+        </div>
+    </div>
+}
+
+<div class="bg-p1 mb-4">
+    <div class="container-fluid px-5 py-5">
+        <div class="row py-5 d-flex flex-column-reverse flex-md-row align-items-center">
+            <div class="col-12 col-md-6 offset-md-1 ">
+                <div class="row d-flex justify-content-start">
+                    @{ 
+                        var statistics = Model.Value<IEnumerable<IPublishedContent>>("statistics");
+                    }
+                    @foreach(var stat in statistics)
+                    {
+                        <div class="col flex-grow-0 text-center mb-4 mb-md-0">
+                            <h2 class="display-4 w">@stat.Value("title")</h2>
+                            <p class="w bt3 mb-0">@stat.Value("description")</p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <div class="col-12 col-md-5 mb-4 mb-md-0">
+                <h2 class="p2 display-4">@Model.Value("impactSectionTitle")</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-center py-5">
+        <div class="col-12 col-md-4">
+            <h2 class="display-4 mb-4 mb-md-0">@Model.Value("moreGreatStuffSectionTitle")</h2>
+        </div>
+        <div class="col-12 col-md-8">
+            @{ 
+                var greatStuffTiles = Model.Value<IEnumerable<IPublishedElement>>("greatStuffTiles");
+            }
+            <div class="carousel-read-more">
+                @foreach(var tile in greatStuffTiles)
+                {
+                    var tileImg = tile.Value<IPublishedContent>("image");
+                    var tileLink = tile.Value<Umbraco.Web.Models.Link>("linkLocation");
+                    <div class="card-read-more">
+                        <div class="card-thumb-img">
+                            <img src="@tileImg.Url" alt="@tileImg.Value("altText")">
+                        </div>
+                        <div class="content text-center">
+                            <h3>@tile.Value("title")</h3>
+                            <p class="bt3">
+                                @tile.Value("description")
+                            </p>
+                            <a href="@tileLink.Url" target="@tileLink.Target" class="btn btn-default btn-primary w">@tileLink.Name</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <hr>
+</div>

@@ -1,0 +1,99 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Homepage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using projectliber8.Extensions;
+@{
+    Layout = "BasePage.cshtml";
+
+    var carouselItems = Model.Value<IEnumerable<IPublishedElement>>("Carousel");
+}
+
+<div class="hero-carousel">
+    @foreach (var slide in carouselItems)
+    {
+        var slideImg = slide.Value<IPublishedContent>("carouselImage");
+        <div class="slide-item white-gradient-header@(slide.Value<Boolean>("showWhiteGradient") ? "" : " variant-no-gradient")">
+            <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+                <h2 class="h1">@slide.Value("title")</h2>
+                <p class="lead p2">@slide.Value("subtitle")</p>
+            </div>
+            <img src="@slideImg.GetCropUrl(height: 900, width: 1920)" alt="@slideImg.Value("altText")" class="background">
+        </div>
+    }
+</div>
+
+@{
+    var featureTiles = Model.Value<IEnumerable<IPublishedElement>>("tiles");
+    var featureTileIdx = 0;
+}
+
+@foreach (var tile in featureTiles)
+{
+    featureTileIdx++;
+    var tileImg = tile.Value<IPublishedContent>("tileImage");
+    <div class="container feature-tile">
+        <div class="row no-gutters d-flex align-items-start pt-5@(featureTileIdx % 2 == 0 ? " flex-row-reverse" : "" )">
+            <div class="col-12 col-md-5">
+                <img src="@tileImg.GetCropUrl(height: 1500, width: 1200)" alt="@tileImg.Value("altText")">
+            </div>
+            <div class="col col-md-7 bg-b1 p-4 p-md-5 mt-md-5">
+                <h1 class="display-4 mb-3 mb-md-5 title">
+                    @{
+                        var tileTitle = tile.Value("tileTitle");
+                    }
+                    @Html.Raw(tileTitle.ToString().RemoveParagraphWrapperTags())
+                </h1>
+                <div class="p2">
+
+                    @Html.Raw(tile.Value("tileDescription"))
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="bg-p1 mt-5">
+    <div class="container">
+        <div class="row py-5">
+            <div class="col-12">
+                @{ 
+                    var mainStatistic = Model.Value<IPublishedContent>("mainStatistic");
+                }
+                <h2 class="display-4 p2">@mainStatistic.Value("title")</h2>
+                <hr class="divider-1 w">
+                <p class="w bt3">@mainStatistic.Value("description")</p>
+            </div>
+        </div>
+        <div class="row pb-4">
+            @{ 
+                var subStatistics = Model.Value<IEnumerable<IPublishedContent>>("statistics");
+            }
+            @foreach(var statistic in subStatistics)
+            {
+                <div class="col-12 col-md-4 text-center">
+                    <h2 class="w display-3">@statistic.Value("title")</h2>
+                    <p class="w"><b>@statistic.Value("description")</b></p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@{ 
+    var isCrossSellVisible = Model.Value<Boolean>("showBanner");
+}
+
+@if (isCrossSellVisible)
+{
+    var crossSellBannerImg = Model.Value<IPublishedContent>("bannerImage");
+    var crossSellLink = Model.Value<Umbraco.Web.Models.Link>("buttonLink");
+    <div class="image-responsive pb-5">
+        <div class="content d-flex align-items-center text-right">
+            <div class="container">
+                <h2 class="display-4 w">Be a Volunteer</h2>
+                <a href="@crossSellLink.Url" target="@crossSellLink.Target" class="btn btn-primary btn-lg w">@crossSellLink.Name</a>
+            </div>
+        </div>
+        <img src="@crossSellBannerImg.GetCropUrl(height: 656, width: 1500)" alt="@crossSellBannerImg.Value("altText")" class="background">
+    </div>
+}

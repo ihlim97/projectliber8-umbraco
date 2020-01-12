@@ -1,0 +1,75 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.TechnologyPage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1">@Model.Value("title")</h2>
+        <h4 class="p2">@Model.Value("subtitle")</h4>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>
+            ("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value(" altText")" class="background">
+</div>
+
+<div class="container">
+    <div class="row d-flex align-items-center py-5">
+        <div class="col-10 offset-1">
+            <h3 class="p2 mb-4 mt-5 mb-md-0 text-center">
+                @Model.Value("contentTitle")
+            </h3>
+        </div>
+        <div class="col-12">
+            <div class="row mt-5 mb-5">
+                @{
+                    var techTiles = Model.Value<IEnumerable<IPublishedElement>>("technologyTiles");
+                }
+                @foreach (var tile in techTiles)
+                {
+                    <div class="col-12 col-md-4">
+                        <div class="image-responsive variant-technology">
+                            <div class="content d-flex align-items-end text-left">
+                                <div class="container">
+                                    <h3 class="w">@tile.Value("title")</h3>
+                                </div>
+                            </div>
+                            @{
+                                var tileImg = tile.Value<IPublishedContent>("image");
+                            }
+                            <img src="@tileImg.Url" alt="@tileImg.Value("altText")" class="background">
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    var tiles = Model.Value<IEnumerable<IPublishedElement>>("contentTiles");
+    var tileIdx = 0;
+}
+@foreach (var tile in tiles)
+{
+    tileIdx++;
+    var tileImage = tile.Value<IPublishedContent>("tileImage");
+    <div class="container-fluid text-by-image-tile p-0">
+        <div class="row no-gutters d-flex@(tileIdx % 2 == 0 ? " flex-row-reverse" : "")">
+            <div class="col col-12 col-md-6 p-5 d-flex flex-column justify-content-center bt3 p1" style="background-color: @tile.Value("tileContentBoxBackgroundColor")">
+                @Html.Raw(tile.Value("tileContent"))
+            </div>
+            <div class="col col-12 col-md-6 pos-rel">
+                <div class="overlay-content p-5">
+                    <h2 class="display-4 w"><span class="p1">@tile.Value("tileImageTitle")</span> @tile.Value("tileImageSubtitle")</h2>
+                </div>
+                <img src="@tileImage.GetCropUrl(width: 1200, height: 750)" alt="@tileImage.Value("altText")" class="background">
+            </div>
+        </div>
+    </div>
+}
+
+<div class="mb-3"></div>

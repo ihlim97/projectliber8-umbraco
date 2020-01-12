@@ -1,0 +1,125 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.AboutPage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "BasePage.cshtml";
+}
+
+<div class="white-gradient-header">
+    <div class="content text-left text-md-right p-3 py-5 p-md-5 d-flex flex-column align-items-start align-items-md-end justify-content-start justify-content-md-center">
+        <h2 class="h1 p2">@Model.Value("title")</h2>
+        <h2 class="h1">@Model.Value("subtitle")</h2>
+    </div>
+    @{
+        var mainHeroImg = Model.Value<IPublishedContent>("mainBannerImage");
+    }
+    <img src="@mainHeroImg.GetCropUrl(height: 1080, width: 1920)" alt="@mainHeroImg.Value("altText")" class="background">
+</div>
+
+<div class="container">
+    <div class="row py-5">
+        <div class="col-12 text-center bt3 p1">
+            @Html.Raw(Model.Value<String>("mainContent"))
+        </div>
+    </div>
+</div>
+
+@{
+    var tiles = Model.Value<IEnumerable<IPublishedElement>>("aboutTiles");
+    var abtTileIdx = 0;
+}
+@foreach (var tile in tiles)
+{
+    abtTileIdx++;
+    var tileImage = tile.Value<IPublishedContent>("tileImage");
+    <div class="container-fluid text-by-image-tile p-0">
+        <div class="row no-gutters d-flex@(abtTileIdx % 2 == 0 ? " flex-row-reverse" : "")">
+            <div class="col col-12 col-md-6 p-5 d-flex flex-column justify-content-center" style="background-color: @tile.Value("tileContentBoxBackgroundColor")">
+                @Html.Raw(tile.Value("tileContent"))
+            </div>
+            <div class="col col-12 col-md-6 pos-rel">
+                <div class="overlay-content p-5">
+                    <h2 class="display-4 w"><span class="p1">@tile.Value("tileImageTitle")</span> @tile.Value("tileImageSubtitle")</h2>
+                </div>
+                <img src="@tileImage.GetCropUrl(width: 1200, height: 750)" alt="@tileImage.Value("altText")" class="background">
+            </div>
+        </div>
+    </div>
+}
+
+@{ 
+    var teamMembers = Model.Value<IPublishedContent>("teamMembers");
+}
+<div class="bg-p1">
+    <div class="container">
+        <div class="row py-5 d-flex flex-column-reverse flex-md-row">
+            <div class="col-12 col-md-9">
+                <div class="team-carousel">
+                    @foreach(var human in teamMembers.Children())
+                    {
+                        var humanImg = human.Value<IPublishedContent>("image");
+                        <div class="slide-item human-tile">
+                            <a href="#team-modal" data-toggle="modal">
+                                <img src="@humanImg.Url" alt="@humanImg.Value("altText")" class="img-fluid">
+                            </a>
+                            <h3 class="p2">@human.Value("memberName")</h3>
+                            <p class="w">@human.Value("designation")</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-12 col-md-3 text-md-right">
+                <h2 class="p2 display-4">@Model.Value("teamSectionTitle")</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-b1 mb-3">
+    <div class="container">
+        <div class="row py-5 d-flex align-items-center">
+            <div class="col-12 col-md-3 text-center text-md-left">
+                <h2 class="display-4">@Model.Value("joinTeamSectionTitle")</h2>
+            </div>
+            <div class="col-12 col-md-9 text-center">
+                @Html.Raw(Model.Value("joinTeamSectionContent"))
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Modals {
+
+    <div class="team-modal modal fade" id="team-modal" tabindex="-1" role="dialog" aria-labelledby="team-modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header pl-4">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            <svg class="icon">
+                                <use xlink:href="img/icons/icons.svg#sprite-close" href="img/icons/icons.svg#sprite-close"></use>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 p-5">
+                            <img src="img/tile-2.jpg" alt="" class="img-fluid img-rounded">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h3 class="p2">New Su Shern</h3>
+                            <p class="p2 font-weight-medium">Founder and Executive Director</p>
+                            <p class="p1 font-weight-medium">
+                                Su Shern came across a video about a girl in a neighbouring country who was trafficked to a brothel at the age of 5 years old. She decided to power through her inspiration from that video to establish Project Liber8 at a tender age of 19 years old. It gets pretty difficult to overcome challenges on issues but she can be pretty funny sometimes, so that makes everything better. She strongly believes momentum is the driving force to your success so you won’t see her slowing down anytime soon. Fun fact - her birthday falls on the National Human Trafficking Awareness Day in the U.S. which we think it’s scarily coincidental!
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
